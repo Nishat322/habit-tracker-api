@@ -5,5 +5,5 @@ CREATE TABLE habits(
     motivation TEXT DEFAULT 'You are doing so well!',
     date_added TIMESTAMPTZ DEFAULT now() NOT NULL,
     goal NUMERIC NOT NULL,
-    daysCompleted NUMERIC
+    days_completed INTEGER
 );
