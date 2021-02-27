@@ -48,7 +48,7 @@ describe('Habits Service Object', function() {
                         title: thirdTestHabit.title,
                         description: thirdTestHabit.description,
                         motivation: thirdTestHabit.motivation,
-                        date_added: thirdTestHabit.date_added,
+                        date_added: new Date(thirdTestHabit.date_added),
                         goal: thirdTestHabit.goal,
                         days_completed: thirdTestHabit.days_completed
                     })
@@ -62,7 +62,10 @@ describe('Habits Service Object', function() {
                 .then(() => HabitsService.getAllHabits(db))
                 .then(allHabits => {
                     const expected = testHabits.filter(habit => habit.id !== habitId)
-                    expect(allHabits).to.eql(expected)
+                    expect(allHabits).to.eql(expected.map(habit => ({
+                        ...habit,
+                        date_added: new Date(habit.date_added)
+                    })))
                 })
         })
 
@@ -80,7 +83,7 @@ describe('Habits Service Object', function() {
                     expect(habit).to.eql({
                         id: idOfHabitToUpdate,
                         goal: testHabits[idOfHabitToUpdate - 1].goal,
-                        date_added: testHabits[idOfHabitToUpdate -1].date_added,
+                        date_added: new Date(testHabits[idOfHabitToUpdate -1].date_added),
                         days_completed: testHabits[idOfHabitToUpdate -1].days_completed,
                         ... newHabitData,
                         
