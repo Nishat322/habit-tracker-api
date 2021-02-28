@@ -45,7 +45,7 @@ habitsRouter
 
 habitsRouter
     .route('/habits/:habit_id')
-    .get((req,res,next) => {
+    .all((req,res,next) => {
         const knexInstance = req.app.get('db')
         const {habit_id} = req.params
         
@@ -57,17 +57,31 @@ habitsRouter
                         error: {message: 'Habit doesn\'t exist'}
                     })
                 }
-                res.json({
-                    id: habit.id,
-                    title: xss(habit.title),
-                    description: xss(habit.description),
-                    motivation: xss(habit.motivation),
-                    date_added: habit.date_added,
-                    goal: habit.goal,
-                    days_completed: habit.days_completed
-                })
+                res.habit = habit
+                next()
             })
             .catch(next)
     })
+    .get((req,res,next) => {
+        res.json({
+            id: habit.id,
+            title: xss(habit.title),
+            description: xss(habit.description),
+            motivation: xss(habit.motivation),
+            date_added: habit.date_added,
+            goal: habit.goal,
+            days_completed: habit.days_completed
+        })   
+    })
+    .delete((req,res,next) => {
+        const {habit_id} = req.params
+        const knexInstance = req.app.get('db')
+
+        HabitsService.deleteHabit(knexInstance, habit_id)
+            .then(() => {
+                res.status(204).end()
+            })
+            .catch(next)
+    }) 
 
 module.exports = habitsRouter

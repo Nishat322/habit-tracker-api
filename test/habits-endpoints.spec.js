@@ -67,10 +67,10 @@ describe('Habits Endpoints', function() {
             })
         })
 
-        context('Given an XSS attack article', () => {
+        context('Given an XSS attack habit', () => {
             const maliciousHabit = makeMaliciousHabit()
             console.log(maliciousHabit)
-            beforeEach('insert malicious article', () => {
+            beforeEach('insert malicious habit', () => {
                 return db 
                     .into('habits')
                     .insert(maliciousHabit)
@@ -145,6 +145,42 @@ describe('Habits Endpoints', function() {
                     .post('/habits')
                     .send(newHabit)
                     .expect(400, {error: {message: `Missing '${field}' in request body`}})
+            })
+        })
+    })
+
+    describe.only('DELETE /habits/:habit_id', () => {
+        context('Given there are habits in the database', () => {
+            const testHabits = makeHabitsArray()
+
+            beforeEach('insert habits', () => {
+                return db   
+                    .into('habits')
+                    .insert(testHabits)
+            })
+
+            it('responds with 204 and removes the article', () => {
+                const idToRemove = 2
+                const expectedHabits = testHabits.filter(habit => habit.id !== idToRemove)
+
+                return supertest(app)
+                    .delete(`/habits/${idToRemove}`)
+                    .expect(204)
+                    .then(res =>
+                        supertest(app)
+                            .get('/habits')
+                            .expect(expectedHabits)    
+                    )
+            })
+        })
+
+        context('Given no habits', () => {
+            it('responds with 404', () => {
+                const habitId = 123456
+
+                return supertest(app)
+                    .delete(`/habits/${habitId}`)
+                    .expect(404, {error: {message: 'Habit doesn\'t exist'}})
             })
         })
     })
