@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const app = require('../src/app')
 const { makeHabitsArray } = require('./habits.fixtures')
 
-describe.only('Habits Endpoints', function() {
+describe('Habits Endpoints', function() {
     let db
 
     before('make knex instance', () => {
@@ -75,6 +75,36 @@ describe.only('Habits Endpoints', function() {
                     .get(`/habits/${habitId}`)
                     .expect(404, {error: {message: 'Habit doesn\'t exist'}})
             })
+        })
+    })
+
+    describe('POST /habits', () => {
+        it('creates a habit, responding with 201 and the new habit', function () {
+            const newHabit = {
+                title: 'New Test Habit',
+                description: 'New test habit description',
+                motivation: 'New test habit motivation',
+                goal: '23',
+            }
+
+            return supertest(app)
+                .post('/habits')
+                .send(newHabit)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(newHabit.title)
+                    expect(res.body.description).to.eql(newHabit.description)
+                    expect(res.body.motivation).to.eql(newHabit.motivation)
+                    expect(res.body.goal).to.eql(newHabit.goal)
+                    expect(res.body).to.have.property('id')
+                    expect(res.body).to.have.property('date_added')
+                    expect(res.headers.location).to.eql(`/habits/${res.body.id}`)
+                })
+                .then(postRes =>
+                    supertest(app)
+                        .get(`/habits/${postRes.body.id}`)
+                        .expect(postRes.body)
+                    )
         })
     })
 })
