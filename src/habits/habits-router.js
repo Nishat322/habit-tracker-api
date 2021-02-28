@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const xss = require('xss')
 const HabitsService = require('./habits-service')
@@ -37,7 +38,7 @@ habitsRouter
             .then(habit => {
                 res 
                     .status(201)
-                    .location(`/habits/${habit.id}`)
+                    .location(path.posix.join(req.originalUrl + `/${habit.id}`))
                     .json(habit)
             })
             .catch(next)
@@ -83,5 +84,25 @@ habitsRouter
             })
             .catch(next)
     }) 
+    .patch(jsonParser, (req,res,next) => {
+        const {title, description, motivation, goal} = req.body
+        const habitToUpdate = {title, description, motivation, goal}
+        const {habit_id} = req.params
+        const knexInstance = req.app.get('db')
+
+        const numberOfValues = Object.values(habitToUpdate).filter(Boolean).length
+        if( numberOfValues === 0){
+            return res
+                .status(400)
+                .json({error: {message: 'Request body must contain either \'title\', \'description\', \'motivation\', or \'goal\''}})
+        }
+
+        HabitsService.updateHabit(knexInstance, habit_id, habitToUpdate)
+            .then(numRowsAffected => {
+                res.status(204).end()
+            })
+            .catch(next)
+
+    })
 
 module.exports = habitsRouter

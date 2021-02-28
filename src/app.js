@@ -18,7 +18,7 @@ app.use(morgan(morganOption))
 app.use(cors())
 app.use(helmet())
 
-app.use('/', habitsRouter)
+app.use('/api', habitsRouter)
 app.use(errorHandler)
     
 module.exports = app

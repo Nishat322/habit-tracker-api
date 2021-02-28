@@ -21,11 +21,11 @@ describe('Habits Endpoints', function() {
 
     afterEach('clean the table', () => db('habits').truncate())
 
-    describe('GET /habits', () => {
+    describe('GET /api/habits', () => {
         context('Given no habits', () => {
             it('responds with 200 and an empty list', () => {
                 return supertest(app)
-                    .get('/habits')
+                    .get('/api/habits')
                     .expect(200, [])
             })
         })
@@ -39,15 +39,15 @@ describe('Habits Endpoints', function() {
                     .insert(testHabits)
             })
     
-            it('GET /habits responds with 200 and all of the habits', () => {
+            it('GET /api/habits responds with 200 and all of the habits', () => {
                 return supertest(app)
-                    .get('/habits')
+                    .get('/api/habits')
                     .expect(200, testHabits)
             })   
         })
     })
    
-    describe('GET /habits/:habit_id', () => {
+    describe('GET /api/habits/:habit_id', () => {
         context('Given there are habits in the database', () => {
             const testHabits = makeHabitsArray()
 
@@ -57,12 +57,12 @@ describe('Habits Endpoints', function() {
                     .insert(testHabits)
             })
 
-            it('GET /habits/:habit_id responds with 200 and the specified habit', () => {
+            it('GET /api/habits/:habit_id responds with 200 and the specified habit', () => {
                 const habitId = 2
                 const expectedHabit = testHabits[habitId -1]
     
                 return supertest(app)
-                    .get(`/habits/${habitId}`)
+                    .get(`/api/habits/${habitId}`)
                     .expect(200, expectedHabit)
             })
         })
@@ -78,7 +78,7 @@ describe('Habits Endpoints', function() {
 
             it('removes XSS attack content', () => {
                 return supertest(app)
-                    .get(`/habits/${maliciousHabit.id}`)
+                    .get(`/api/habits/${maliciousHabit.id}`)
                     .expect(200)
                     .expect(res => {
                         expect(res.body.title).to.eql('Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;')
@@ -93,13 +93,13 @@ describe('Habits Endpoints', function() {
                 const habitId = 123456
                 
                 return supertest(app)
-                    .get(`/habits/${habitId}`)
+                    .get(`/api/habits/${habitId}`)
                     .expect(404, {error: {message: 'Habit doesn\'t exist'}})
             })
         })
     })
 
-    describe('POST /habits', () => {
+    describe('POST /api/habits', () => {
         it('creates a habit, responding with 201 and the new habit', function () {
             const newHabit = {
                 title: 'New Test Habit',
@@ -109,7 +109,7 @@ describe('Habits Endpoints', function() {
             }
 
             return supertest(app)
-                .post('/habits')
+                .post('/api/habits')
                 .send(newHabit)
                 .expect(201)
                 .expect(res => {
@@ -119,11 +119,11 @@ describe('Habits Endpoints', function() {
                     expect(res.body.goal).to.eql(newHabit.goal)
                     expect(res.body).to.have.property('id')
                     expect(res.body).to.have.property('date_added')
-                    expect(res.headers.location).to.eql(`/habits/${res.body.id}`)
+                    expect(res.headers.location).to.eql(`/api/habits/${res.body.id}`)
                 })
                 .then(postRes =>
                     supertest(app)
-                        .get(`/habits/${postRes.body.id}`)
+                        .get(`/api/habits/${postRes.body.id}`)
                         .expect(postRes.body)
                     )
         })
@@ -142,14 +142,14 @@ describe('Habits Endpoints', function() {
                 delete newHabit[field]
 
                 return supertest(app)
-                    .post('/habits')
+                    .post('/api/habits')
                     .send(newHabit)
                     .expect(400, {error: {message: `Missing '${field}' in request body`}})
             })
         })
     })
 
-    describe('DELETE /habits/:habit_id', () => {
+    describe('DELETE /api/habits/:habit_id', () => {
         context('Given there are habits in the database', () => {
             const testHabits = makeHabitsArray()
 
@@ -164,11 +164,11 @@ describe('Habits Endpoints', function() {
                 const expectedHabits = testHabits.filter(habit => habit.id !== idToRemove)
 
                 return supertest(app)
-                    .delete(`/habits/${idToRemove}`)
+                    .delete(`/api/habits/${idToRemove}`)
                     .expect(204)
                     .then(res =>
                         supertest(app)
-                            .get('/habits')
+                            .get('/api/habits')
                             .expect(expectedHabits)    
                     )
             })
@@ -179,9 +179,88 @@ describe('Habits Endpoints', function() {
                 const habitId = 123456
 
                 return supertest(app)
-                    .delete(`/habits/${habitId}`)
+                    .delete(`/api/habits/${habitId}`)
                     .expect(404, {error: {message: 'Habit doesn\'t exist'}})
             })
         })
     })
+
+    describe.only('PATCH /api/habits/:habit_id', () => {
+        context('Given no habits', () => {
+            it('responds with 404', () => {
+                const habitId = 123456
+
+                return supertest(app)
+                    .patch(`/api/habits/${habitId}`)
+                    .expect(404, {error: {message: 'Habit doesn\'t exist'}})
+            })
+        })
+
+        context('Given there are habits in the datatbase', () => {
+            const testHabits = makeHabitsArray()
+
+            beforeEach('insert habits', () => {
+                return db   
+                    .into('habits')
+                    .insert(testHabits)
+            })
+
+            it('responds with 204 and updates the habit', () => {
+                const idToUpdate = 2
+                const updateHabit = {
+                    title: 'Updated Habit',
+                    description: 'Updated habit description',
+                    motivation: 'Updated motivation',
+                    goal: '5'
+                }
+                const expectedHabit = {
+                    ...testHabits[idToUpdate - 1],
+                    ...updateHabit
+                }
+
+                return supertest(app)
+                    .patch(`/api/habits/${idToUpdate}`)
+                    .send(updateHabit)
+                    .expect(204)
+                    .then(res =>
+                        supertest(app)
+                            .get(`/api/habits/${idToUpdate}`)
+                            .expect(expectedHabit)    
+                    )
+            })
+
+            it('responds with 400 when no required fields supplied', () => {
+                const idToUpdate = 3
+                return supertest(app)
+                    .patch(`/api/habits/${idToUpdate}`)
+                    .send({irrelavntField: 'foo'})
+                    .expect(400, {error: {message:'Request body must contain either \'title\', \'description\', \'motivation\', or \'goal\''}})
+            })
+
+            it('responds with 204 when updating only a subset of fields', () => {
+                const idToUpdate = 2
+                const updateHabit = {
+                    title: 'Updated habit title'
+                }
+                const expectedHabit = {
+                    ...testHabits[idToUpdate - 1],
+                    ...updateHabit
+                }
+
+                return supertest(app)
+                    .patch(`/api/habits/${idToUpdate}`)
+                    .send({
+                        ...updateHabit,
+                        fieldToIgnore: 'should not be in the GET response'
+                    })
+                    .expect(204)
+                    .then(res => 
+                        supertest(app)
+                            .get(`/api/habits/${idToUpdate}`)
+                            .expect(expectedHabit)
+                    )
+            })
+        })
+    })
+    
 })
