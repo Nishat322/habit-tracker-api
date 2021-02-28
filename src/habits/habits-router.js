@@ -64,13 +64,13 @@ habitsRouter
     })
     .get((req,res,next) => {
         res.json({
-            id: habit.id,
-            title: xss(habit.title),
-            description: xss(habit.description),
-            motivation: xss(habit.motivation),
-            date_added: habit.date_added,
-            goal: habit.goal,
-            days_completed: habit.days_completed
+            id: res.habit.id,
+            title: xss(res.habit.title),
+            description: xss(res.habit.description),
+            motivation: xss(res.habit.motivation),
+            date_added: res.habit.date_added,
+            goal: res.habit.goal,
+            days_completed: res.habit.days_completed
         })   
     })
     .delete((req,res,next) => {

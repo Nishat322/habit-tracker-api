@@ -149,7 +149,7 @@ describe('Habits Endpoints', function() {
         })
     })
 
-    describe.only('DELETE /habits/:habit_id', () => {
+    describe('DELETE /habits/:habit_id', () => {
         context('Given there are habits in the database', () => {
             const testHabits = makeHabitsArray()
 
