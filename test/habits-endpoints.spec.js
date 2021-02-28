@@ -106,5 +106,25 @@ describe('Habits Endpoints', function() {
                         .expect(postRes.body)
                     )
         })
+
+        const requiredFields = ['title', 'description', 'goal']
+
+        requiredFields.forEach(field => {
+            const newHabit = {
+                title: 'New Test Habit',
+                description: 'New test habit description',
+                motivation: 'New test habit motivation',
+                goal: '23',
+            }
+
+            it(`responds with 400 and error message when the ${field} is missing`, () => {
+                delete newHabit[field]
+
+                return supertest(app)
+                    .post('/habits')
+                    .send(newHabit)
+                    .expect(400, {error: {message: `Missing '${field}' in request body`}})
+            })
+        })
     })
 })

@@ -18,8 +18,19 @@ habitsRouter
     })
     .post(jsonParser, (req,res,next) => {
         const {title, description, motivation, goal} = req.body
-        const newHabit = {title, description, motivation, goal}
+        const newHabit = {title, description, goal}
         const knexInstance = req.app.get('db')
+
+        for(const [key, value] of Object.entries(newHabit)){
+            if(value == null){
+                logger.error(`${key} is required`)
+                return res
+                    .status(400)
+                    .json({error: {message: `Missing '${key}' in request body`}})
+            }
+        }
+
+        newHabit.motivation = motivation
 
         HabitsService.insertHabit(knexInstance, newHabit)
             .then(habit => {
