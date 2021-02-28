@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const knex = require('knex')
 const supertest = require('supertest')
 const app = require('../src/app')
-const { makeHabitsArray } = require('./habits.fixtures')
+const { makeHabitsArray, makeMaliciousHabit } = require('./habits.fixtures')
 
 describe('Habits Endpoints', function() {
     let db
@@ -64,6 +64,27 @@ describe('Habits Endpoints', function() {
                 return supertest(app)
                     .get(`/habits/${habitId}`)
                     .expect(200, expectedHabit)
+            })
+        })
+
+        context('Given an XSS attack article', () => {
+            const maliciousHabit = makeMaliciousHabit()
+            console.log(maliciousHabit)
+            beforeEach('insert malicious article', () => {
+                return db 
+                    .into('habits')
+                    .insert(maliciousHabit)
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/habits/${maliciousHabit.id}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.title).to.eql('Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;')
+                        expect(res.body.description).to.eql(`Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`)
+                        expect(res.body.motivation).to.eql(`Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`)
+                    })
             })
         })
 

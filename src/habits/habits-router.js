@@ -1,4 +1,5 @@
 const express = require('express')
+const xss = require('xss')
 const HabitsService = require('./habits-service')
 const logger = require('../logger')
 
@@ -56,7 +57,15 @@ habitsRouter
                         error: {message: 'Habit doesn\'t exist'}
                     })
                 }
-                res.json(habit)
+                res.json({
+                    id: habit.id,
+                    title: xss(habit.title),
+                    description: xss(habit.description),
+                    motivation: xss(habit.motivation),
+                    date_added: habit.date_added,
+                    goal: habit.goal,
+                    days_completed: habit.days_completed
+                })
             })
             .catch(next)
     })

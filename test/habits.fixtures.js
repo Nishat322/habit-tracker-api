@@ -30,6 +30,19 @@ function makeHabitsArray(){
     ]
 }
 
+function makeMaliciousHabit(){
+    return {
+            id: 911,
+            title: 'Naughty naughty very naughty <script>alert("xss");</script>',
+            description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+            motivation: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+            date_added: '1919-12-22T16:28:32.615Z',
+            goal: '4',
+            days_completed: null
+    }
+}
+
 module.exports = {
-    makeHabitsArray
+    makeHabitsArray,
+    makeMaliciousHabit
 }
