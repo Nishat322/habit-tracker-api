@@ -89,3 +89,28 @@
 {"message":"Habit with 123456 not found.","level":"error"}
 {"message":"Habit with 123456 not found.","level":"error"}
 {"message":"Habit with 123456 not found.","level":"error"}
+{"message":"Habit with 123456 not found.","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"description is required","level":"error"}
+{"message":"goal is required","level":"error"}
+{"message":"Habit with 123456 not found.","level":"error"}
+{"message":"Habit with 123456 not found.","level":"error"}
+{"message":"Habit with 13 not found.","level":"error"}
+{"message":"Habit with 6 not found.","level":"error"}
+{"message":"Accomplishment with 5 not found.","level":"error"}
+{"message":"Accomplishment with 5 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"description is required","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"description is required","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"description is required","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}

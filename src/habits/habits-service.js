@@ -1,14 +1,14 @@
-const HabitsService = {
-    getAllHabits(knex) {
+const AccomplishmentsService = {
+    getAllAccomplishments(knex) {
         return knex
             .select('*')
-            .from('habits')
+            .from('accomplishments')
     },
 
-    insertHabit(knex, newHabit){
+    insertAccomplishment(knex, newAccomplishment){
         return knex 
-            .insert(newHabit)
-            .into('habits')
+            .insert(newAccomplishment)
+            .into('accomplishments')
             .returning('*')
             .then(rows => {
                 return rows[0]
@@ -17,23 +17,23 @@ const HabitsService = {
 
     getById(knex, id){
         return knex
-            .from('habits')
+            .from('accomplishments')
             .select('*')
             .where('id', id)
             .first()
     },
 
-    deleteHabit(knex, id){
-        return knex('habits')
+    deleteAccomplishment(knex, id){
+        return knex('accomplishments')
             .where({id})
             .delete()
     },
 
-    updateHabit(knex, id, newHabitFields){
-        return knex('habits')
+    updateAccomplishment(knex, id, newAccomplishmentFields){
+        return knex('accomplishments')
             .where({id})
-            .update(newHabitFields)
+            .update(newAccomplishmentFields)
     }
 }
 
-module.exports = HabitsService
+module.exports = AccomplishmentsService

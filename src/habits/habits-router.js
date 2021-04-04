@@ -1,29 +1,29 @@
 const path = require('path')
 const express = require('express')
 const xss = require('xss')
-const HabitsService = require('./habits-service')
+const AccomplishmentsService = require('./habits-service')
 const logger = require('../logger')
 
-const habitsRouter = express.Router()
+const accomplishmentsRouter = express.Router()
 const jsonParser = express.json()
 
-habitsRouter
-    .route('/habits')
+accomplishmentsRouter
+    .route('/accomplishments')
     .get((req,res,next) => {
         const knexInstance = req.app.get('db')
     
-        HabitsService.getAllHabits(knexInstance)
-            .then(habits => {
-                res.json(habits)
+        AccomplishmentsService.getAllAccomplishments(knexInstance)
+            .then(accomplishments => {
+                res.json(accomplishments)
             })
             .catch(next)
     })
     .post(jsonParser, (req,res,next) => {
-        const {title, description, motivation, goal} = req.body
-        const newHabit = {title, description, goal}
+        const {title, description} = req.body
+        const newAccomplishment = {title, description}
         const knexInstance = req.app.get('db')
 
-        for(const [key, value] of Object.entries(newHabit)){
+        for(const [key, value] of Object.entries(newAccomplishment)){
             if(value == null){
                 logger.error(`${key} is required`)
                 return res
@@ -32,77 +32,52 @@ habitsRouter
             }
         }
 
-        newHabit.motivation = motivation
-
-        HabitsService.insertHabit(knexInstance, newHabit)
-            .then(habit => {
+        AccomplishmentsService.insertAccomplishment(knexInstance, newAccomplishment)
+            .then(accomplishment => {
                 res 
                     .status(201)
-                    .location(path.posix.join(req.originalUrl + `/${habit.id}`))
-                    .json(habit)
+                    .location(path.posix.join(req.originalUrl + `/${accomplishment.id}`))
+                    .json(accomplishment)
             })
             .catch(next)
     })
 
-habitsRouter
-    .route('/habits/:habit_id')
+accomplishmentsRouter
+    .route('/accomplishments/:accomplishment_id')
     .all((req,res,next) => {
         const knexInstance = req.app.get('db')
-        const {habit_id} = req.params
+        const {accomplishment_id} = req.params
         
-        HabitsService.getById(knexInstance, habit_id)
-            .then(habit => {
-                if(!habit) {
-                    logger.error(`Habit with ${habit_id} not found.`)
+        AccomplishmentsService.getById(knexInstance, accomplishment_id)
+            .then(accomplishment => {
+                if(!accomplishment) {
+                    logger.error(`Accomplishment with ${accomplishment_id} not found.`)
                     return res.status(404).json({
-                        error: {message: 'Habit doesn\'t exist'}
+                        error: {message: 'Accomplishment doesn\'t exist'}
                     })
                 }
-                res.habit = habit
+                res.accomplishment = accomplishment
                 next()
             })
             .catch(next)
     })
     .get((req,res,next) => {
         res.json({
-            id: res.habit.id,
-            title: xss(res.habit.title),
-            description: xss(res.habit.description),
-            motivation: xss(res.habit.motivation),
-            date_added: res.habit.date_added,
-            goal: res.habit.goal,
-            days_completed: res.habit.days_completed
+            id: res.accomplishment.id,
+            title: xss(res.accomplishment.title),
+            description: xss(res.accomplishment.description),
+            date_added: res.accomplishment.date_added,
         })   
     })
     .delete((req,res,next) => {
-        const {habit_id} = req.params
+        const {accomplishment_id} = req.params
         const knexInstance = req.app.get('db')
 
-        HabitsService.deleteHabit(knexInstance, habit_id)
+        AccomplishmentsService.deleteAccomplishment(knexInstance, accomplishment_id)
             .then(() => {
                 res.status(204).end()
             })
             .catch(next)
     }) 
-    .patch(jsonParser, (req,res,next) => {
-        const {title, description, motivation, goal} = req.body
-        const habitToUpdate = {title, description, motivation, goal}
-        const {habit_id} = req.params
-        const knexInstance = req.app.get('db')
 
-        const numberOfValues = Object.values(habitToUpdate).filter(Boolean).length
-        if( numberOfValues === 0){
-            return res
-                .status(400)
-                .json({error: {message: 'Request body must contain either \'title\', \'description\', \'motivation\', or \'goal\''}})
-        }
-
-        HabitsService.updateHabit(knexInstance, habit_id, habitToUpdate)
-            .then(numRowsAffected => {
-                res.status(204).end()
-            })
-            .catch(next)
-
-    })
-
-module.exports = habitsRouter
+module.exports = accomplishmentsRouter

@@ -10,7 +10,7 @@ Start nodemon for the application `npm run dev`
 
 Run the tests `npm test`
 
-Seed the Database `psql -U HabitUser -d habit_tracker -f ./seeds/seed.habits.sql`
+Seed the Database `psql -U dunder_mifflen -d tracker -f ./seeds/seed.habits.sql`
 
 ## Deploying
 

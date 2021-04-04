@@ -1,48 +1,36 @@
-function makeHabitsArray(){
+function makeAccomplishmentsArray(){
     return [
         {
             id: 1, 
-            title: 'Test Habit One', 
+            title: 'Test Accomplishment One', 
             description: 'Some test description', 
-            motivation: 'Some test motivation',
             date_added: '2100-05-22T16:28:32.615Z',
-            goal: '28', 
-            days_completed: 0
         }, 
         {
             id: 2, 
-            title: 'Test Habit Two', 
+            title: 'Test Accomplishment Two', 
             description: 'Some test description', 
-            motivation: 'Some test motivation', 
             date_added: '1919-12-22T16:28:32.615Z',
-            goal: '4', 
-            days_completed: 3
         },
         {
             id: 3, 
-            title: 'Test Habit Three', 
+            title: 'Test Accomplishment Three', 
             description: 'Some test desciptions', 
-            motivation: '', 
             date_added: '1919-12-22T16:28:32.615Z',
-            goal: '13', 
-            days_completed: null
         }
     ]
 }
 
-function makeMaliciousHabit(){
+function makeMaliciousAccomplishment(){
     return {
             id: 911,
             title: 'Naughty naughty very naughty <script>alert("xss");</script>',
             description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
-            motivation: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
             date_added: '1919-12-22T16:28:32.615Z',
-            goal: '4',
-            days_completed: null
     }
 }
 
 module.exports = {
-    makeHabitsArray,
-    makeMaliciousHabit
+    makeAccomplishmentsArray,
+    makeMaliciousAccomplishment
 }
