@@ -114,3 +114,8 @@
 {"message":"title is required","level":"error"}
 {"message":"description is required","level":"error"}
 {"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"description is required","level":"error"}
+{"message":"Accomplishment with 123456 not found.","level":"error"}
+{"message":"description is required","level":"error"}

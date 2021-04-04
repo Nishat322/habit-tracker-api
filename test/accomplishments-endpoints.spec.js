@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const knex = require('knex')
 const supertest = require('supertest')
 const app = require('../src/app')
-const {makeAccomplishmentsArray, makeMaliciousAccomplishment} = require('./habits.fixtures')
+const {makeAccomplishmentsArray, makeMaliciousAccomplishment} = require('./accomplishments.fixtures')
 
 describe('Accomplishments Endpoints', function () {
     let db 

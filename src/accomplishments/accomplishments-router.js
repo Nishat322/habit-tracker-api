@@ -1,7 +1,7 @@
 const path = require('path')
 const express = require('express')
 const xss = require('xss')
-const AccomplishmentsService = require('./habits-service')
+const AccomplishmentsService = require('./accomplishments-service')
 const logger = require('../logger')
 
 const accomplishmentsRouter = express.Router()
